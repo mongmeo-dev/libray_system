@@ -5,5 +5,5 @@ from accounts.models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'username', 'email', 'can_borrow')
+    list_display = ('id', 'username', 'email', 'can_rent')
     list_display_links = ('id', 'username', 'email')

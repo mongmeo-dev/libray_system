@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
@@ -26,9 +26,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
 
     @property
-    def can_borrow(self):
-        if self.penalty_date is None or self.penalty_date < datetime.now():
+    def can_rent(self):
+        if self.penalty_date is None:
+            return True
+        elif self.penalty_date < date.today():
             self.penalty_date = None
+            self.save()
             return True
         return False
 
