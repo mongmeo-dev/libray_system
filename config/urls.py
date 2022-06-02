@@ -6,7 +6,8 @@ from config import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/', include('accounts.urls'))
+    path('users/', include('accounts.urls')),
+    path('books/', include('books.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
