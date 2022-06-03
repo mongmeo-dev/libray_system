@@ -1,4 +1,3 @@
-from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
@@ -22,7 +21,6 @@ class RentalViewSet(viewsets.ModelViewSet):
             return BookRentalUpdateSerializer
         return BookRentalSerializer
 
-    @transaction.atomic
     def perform_create(self, serializer):
         return BookRental.rental_book(self.request.user, serializer)
 
