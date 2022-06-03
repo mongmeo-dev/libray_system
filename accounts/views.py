@@ -4,6 +4,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
+from rentals.models import BookRental
+from rentals.permissions import IsAdminOrOwner
+from rentals.serializers import BookRentalSerializer
 from .models import User
 from .permissions import IsNotAuthenticated, IsAdminOrLoggedInUser
 from .serializers import LoginSerializer, UserUpdateSerializer, UserSerializer
@@ -39,6 +42,15 @@ class LoginView(generics.GenericAPIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class UserRentalView(generics.ListAPIView):
+    serializer_class = BookRentalSerializer
+    permission_classes = [IsAdminOrOwner]
+
+    def get_queryset(self):
+        user_pk = self.kwargs['pk']
+        return BookRental.objects.filter(user_id=user_pk)
 
 
 @api_view(['POST'])
