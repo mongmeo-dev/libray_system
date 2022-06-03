@@ -20,9 +20,9 @@ class BookRental(models.Model):
     def __str__(self):
         return f'{self.pk} {self.user} - {self.book}({self.book_quantity})'
 
-    @classmethod
+    @staticmethod
     @transaction.atomic
-    def rental_book(cls, user, serializer):
+    def rental_book(user, serializer):
         if not user.can_rent:
             print(user.can_rent)
             raise ValidationError({'message': '대출 금지 상태입니다.'})
