@@ -14,7 +14,7 @@ class BookRental(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     book_quantity = models.IntegerField()
-    created_at = models.DateTimeField(default=timezone.now())
+    created_at = models.DateTimeField(default=timezone.now)
     return_date = models.DateTimeField(default=calculate_return_date)
 
     def __str__(self):
