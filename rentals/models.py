@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 from accounts.models import User
@@ -15,3 +15,20 @@ class BookRental(models.Model):
     book_quantity = models.IntegerField()
     created_at = models.DateTimeField(default=timezone.now())
     return_date = models.DateTimeField(default=calculate_return_date)
+
+    def __str__(self):
+        return f'{self.pk} {self.user} - {self.book}({self.book_quantity}) '
+
+    @transaction.atomic
+    def return_book(self):
+        book = self.book
+        book.stock += self.book_quantity
+        book.save()
+
+        if self.return_date < timezone.now():
+            user = self.user
+            penalty_days = timezone.now() - self.return_date
+            user.penalty_date = timezone.now() + penalty_days
+            user.save()
+
+        self.delete()

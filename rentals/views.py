@@ -1,5 +1,6 @@
 from django.db import transaction
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .models import BookRental
@@ -24,16 +25,19 @@ class RentalViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def perform_create(self, serializer):
+        user = self.request.user
+        if not user.can_rent:
+            print(user.can_rent)
+            raise ValidationError({'message': '대출 금지 상태입니다.'})
+
         book = serializer.validated_data['book']
         book.stock -= serializer.validated_data['book_quantity']
-        serializer.validated_data['user'] = self.request.user
+
+        serializer.validated_data['user'] = user
+
         serializer.save()
         book.save()
         return serializer
 
-    @transaction.atomic
     def perform_destroy(self, instance):
-        book = instance.book
-        book.stock += instance.book_quantity
-        book.save()
-        instance.delete()
+        instance.return_book()
